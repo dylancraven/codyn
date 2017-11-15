@@ -13,13 +13,12 @@
 #' If multiple replicates are included in the data frame, that column should be specified with replicate.var. Each replicate should reflect a single experimental unit - there must be a single abundance value per species within each time point and replicate.
 #' @references  Collins, Scott L., Katharine N. Suding, Elsa E. Cleland, Michael Batty, Steven C. Pennings, Katherine L. Gross, James B. Grace, Laura Gough, Joe E. Fargione, and Christopher M. Clark.  (2008) "Rank clocks and plant community dynamics." Ecology 89, no. 12: 3534-41.
 #' @examples
-#'  data(knz_001d)
-#'
-#'  richness(c(2,3,4,5,8,9,11,0,0,23,11,2,1,NA,NA,4))
+#'  richness(c(2,3,4,5,8,9,11,0,0,23,11,2,1,NA,NA,4)) # Numeric count data
+#'  richness(unique(iris$Species))  # Factor data
+#'  richness(as.character(unique(iris$Species)))  # Species list
 #' @export
 richness <- function(x) {
-    x1 <- x[x!=0]
-    # TODO: deal with missing values
+    x1 <- x[x!=0 & !is.na(x)]
     length(x1)
 }
 
