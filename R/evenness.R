@@ -1,35 +1,24 @@
-#' @title E_Q Evenness
-#' @description A measure of the relative change in species rank abundances, which indicates shifts in relative abundances over time (Collins et al. 2008).
-#' Mean rank shifts are calculated as the average difference in species' ranks between consecutive time periods, among species that are present across the entire time series.
-#' @param x the vector of abundances of each species
-#' @return evenness returns e_q evenness, or 1 if all abundances are equal
+#' @title Evenness measured with EQ 
+#' @description A measure of the evenness of a sample using EQ (See Smith and Wilson 1996). 
+#' @param x the vector of abundances of each species in a sample
+#' @return Evenness returns EQ evenness, a number. 
 #' @details
-#' The input data frame needs to contain columns for time, species and abundance; time.var, species.var and abundance.var are used to indicate which columns contain those variables.
-#' If multiple replicates are included in the data frame, that column should be specified with replicate.var. Each replicate should reflect a single experimental unit - there must be a single abundance value per species within each time point and replicate.
-#' @references  Collins, Scott L., Katharine N. Suding, Elsa E. Cleland, Michael Batty, Steven C. Pennings, Katherine L. Gross, James B. Grace, Laura Gough, Joe E. Fargione, and Christopher M. Clark.  (2008) "Rank clocks and plant community dynamics." Ecology 89, no. 12: 3534-41.
+#' For numeric data only, evenness will calculate EQ evenness of the sample. EQ = 2/(pi)*arctan(b'), where b' is the slope of the fitted line of the log of abundance versus the scaled rank of all species in a sample. Evenness is bound between 0-1. It is 1 if all abundances are equal, and NA if there is only 1 species in the sample. [NOTE TO MEGHAN: talk to ian about the equation, if I recall we think thier negative is wrong]
+#' @references  Smith, B, and Wilson, J. (1996). A consumer's guide to evenness indices. Oikos 76: 70-82.
+#' Avolio et al. IN PREP.
 #' @examples
-#'  # Calculate mean rank shifts within replicates
-#'  data(knz_001d)
-#'
-#'  myoutput <- rank_shift(knz_001d,
-#'                      time.var = "year",
-#'                      species.var = "species",
-#'                      abundance.var = "abundance",
-#'                      replicate.var = "subplot")
-#'
-#'  # Calculate mean rank shifts for a data frame with no replication
-#'
-#'  myoutput_singlerep <- rank_shift(subset(knz_001d, subplot=="A_1"),
-#'                            time.var = "year",
-#'                            species.var = "species",
-#'                            abundance.var = "abundance")
+#' evenness(c(2,3,4,5,8,9,11,0,0,23,11,2,1,NA,NA,4)) # Numeric data
+#' evenness(subset(knz_001d, year==1983&subplot=="A_1")$abundance) # Numeric data from a dataframe
+#' evenness(c(3,3,3)) # will return 1, the community is perfectly even, that is, the abundance of individuals are are equally distrubited among the species
+#' evenness(3)# will return NA because evenness as a concept does not apply to a community with only one species
 #' @export
-e_q <- function(x) {
-    x1<-x[x!=0]
+evenness <- function(x) {
+    x1<-x[x!=0 & !is.na(x)]
+    #stopifnot(x1==as.numeric(x1))#is this necessary?
     if (length(x1)==1) {
         return(NA)
     }
-    if (abs(max(x1) - min(x1)) < .Machine$double.eps^0.5) { ##bad idea to test for zero, so this is basically doing the same thing testing for a very small number
+    if (abs(max(x1) - min(x1)) < .Machine$double.eps^0.5) { 
         return(1)
     }
     r<-rank(x1, ties.method = "average")
