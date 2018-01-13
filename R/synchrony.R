@@ -110,7 +110,7 @@ synch_onerep <- function(df, time.var, species.var, abundance.var,
     metric = match.arg(metric, choices = c("Loreau", "Gross")) # for partial argument matching
 
     #remove any species that were never present.
-    df <- subset(df, abundance.var > 0)
+    #df <- subset(df, abundance.var > 0)
     
     #fill in 0s
     spplist <- unique(df[species.var])
