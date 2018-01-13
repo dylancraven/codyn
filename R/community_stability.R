@@ -36,7 +36,7 @@ community_stability <- function(df, time.var,
   check_numeric(df, time.var, abundance.var)
 
   # remove zeros  
-  df <- df[which(df[[abundance.var]] > 0),]
+  #df <- df[which(df[[abundance.var]] > 0),]
 
   if (is.na(replicate.var)) {
 
